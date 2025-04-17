@@ -6,6 +6,7 @@ import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
 @ComponentScan("com.example.micro_servicio_1_lineales_arboles.controllers") 
+@ComponentScan("com.example.micro_servicio_1_lineales_arboles.services") 
 public class MicroServicio1LinealesArbolesApplication {
 
 	public static void main(String[] args) {
