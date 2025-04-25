@@ -1,0 +1,47 @@
+package com.example.micro_servicio_1_lineales_arboles.services;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.example.micro_servicio_1_lineales_arboles.dto.RegistroDTO;
+import com.example.micro_servicio_1_lineales_arboles.models.Registros;
+import com.example.micro_servicio_1_lineales_arboles.repository.RegistroRepository;
+
+@Service
+public class RegistroService {
+    
+
+    private final RegistroRepository registroRepository;
+
+    @Autowired
+    public RegistroService(RegistroRepository registroRepository) {
+        this.registroRepository = registroRepository;
+    }
+
+    @Autowired
+    private ModelMapper modelMapper;
+
+    public List<RegistroDTO> getAllRegistros() {
+        List<Registros> registros = registroRepository.findAll();
+        return registros.stream().map(this::convertToDTO).collect(Collectors.toList());
+    }
+
+    public RegistroDTO getRegistroById(String id){
+        Registros registro = registroRepository.findOneByIdenQuery(id).orElse(null);
+        return registro != null ? convertToDTO(registro) : null;
+    }
+
+    private RegistroDTO convertToDTO(Registros registro) {
+        RegistroDTO registroDTO = modelMapper.map(registro, RegistroDTO.class);
+        registroDTO.setId(registro.getId());
+        registroDTO.setDate(registro.getDate());
+        registroDTO.setChanges(registro.getChanges());
+        registroDTO.setType(registro.getType());
+        return registroDTO;
+    }
+
+}
