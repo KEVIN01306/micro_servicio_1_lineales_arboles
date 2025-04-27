@@ -35,6 +35,11 @@ public class RegistroService {
         return registro != null ? convertToDTO(registro) : null;
     }
 
+    public List<RegistroDTO> getRegistroByType(String type) {
+        List<Registros> registros = registroRepository.findAllByType(type);
+        return registros.stream().map(this::convertToDTO).collect(Collectors.toList());
+    }
+
     private RegistroDTO convertToDTO(Registros registro) {
         RegistroDTO registroDTO = modelMapper.map(registro, RegistroDTO.class);
         registroDTO.setId(registro.getId());

@@ -46,6 +46,18 @@ public class RegistroController {
         }
     }
     
+    @PostMapping("/buscarPorTipo")
+    public ResponseEntity<List<RegistroDTO>> obtenerRegistroPortype(@RequestBody Map<String,String> requesBody){
+        String type = requesBody.get("type");
+        List<RegistroDTO> registro = registroService.getRegistroByType(type);
+        if (registro != null) {
+            return new ResponseEntity<>(registro, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    
 }
 
 

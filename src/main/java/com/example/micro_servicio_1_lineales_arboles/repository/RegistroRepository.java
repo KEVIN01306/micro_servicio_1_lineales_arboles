@@ -1,5 +1,6 @@
 package com.example.micro_servicio_1_lineales_arboles.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -14,4 +15,6 @@ public interface RegistroRepository extends MongoRepository<Registros, String>{
     @Query("{ 'iden': ?0 }")
     Optional<Registros> findOneByIdenQuery( String iden);
     
+    @Query ("{'type': ?0 }")
+    List<Registros> findAllByType( String type);
 }
