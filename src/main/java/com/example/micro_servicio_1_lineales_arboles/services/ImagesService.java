@@ -30,6 +30,11 @@ public class ImagesService {
         return imagenes.stream().map(this::converToDto).collect(Collectors.toList());
     }
 
+    public List<ImagesDTO> getAllImagesRegistro(String registro_id){
+        List<Images> imagenes = imageRepository.findAllByImages(registro_id);
+        return imagenes.stream().map(this::converToDto).collect(Collectors.toList());
+    }
+
     public ImagesDTO converToDto(Images imagen){
         ImagesDTO imagenDTO = modelMapper.map(imagen,ImagesDTO.class);
         imagenDTO.setRegistro_Id(imagen.getRegistro_id());
