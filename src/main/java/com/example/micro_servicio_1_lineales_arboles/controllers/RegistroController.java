@@ -56,6 +56,12 @@ public class RegistroController {
         }
     }
 
+    @PostMapping("/insertar")
+    public ResponseEntity<RegistroDTO> insertarRegistro(@RequestBody RegistroDTO registroDTO) {
+        RegistroDTO nuevoRegistro = registroService.guardarRegistro(registroDTO);
+        return new ResponseEntity<>(nuevoRegistro, HttpStatus.CREATED);
+    }
+
     
 }
 

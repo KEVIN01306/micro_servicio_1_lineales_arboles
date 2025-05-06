@@ -7,18 +7,13 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Registros {
     
     @Id
-    private String _id;
-    private String iden;
+    private String id;
     private String date;
     private String changes;
     private String type;
 
-    public String get_Id(){
-        return this._id;
-    }
-
     public String getId(){
-        return this.iden;
+        return this.id;
     }
 
     public String getDate(){
@@ -40,5 +35,10 @@ public class Registros {
     public String getType(){
         return this.type;
     }
+
+    public void setType(String newType){
+        this.type = newType; 
+    }
+    
 
 }

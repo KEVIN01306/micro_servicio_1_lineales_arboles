@@ -40,6 +40,12 @@ public class RegistroService {
         return registros.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
+    public RegistroDTO guardarRegistro(RegistroDTO registroDTO) {
+        Registros registro = convertToEntity(registroDTO);
+        Registros registroGuardado = registroRepository.save(registro);
+        return convertToDTO(registroGuardado);
+    }
+
     private RegistroDTO convertToDTO(Registros registro) {
         RegistroDTO registroDTO = modelMapper.map(registro, RegistroDTO.class);
         registroDTO.setId(registro.getId());
@@ -47,6 +53,10 @@ public class RegistroService {
         registroDTO.setChanges(registro.getChanges());
         registroDTO.setType(registro.getType());
         return registroDTO;
+    }
+
+    private Registros convertToEntity(RegistroDTO registroDTO) {
+        return modelMapper.map(registroDTO, Registros.class);
     }
 
 }
