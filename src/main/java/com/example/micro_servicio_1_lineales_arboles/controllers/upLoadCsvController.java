@@ -1,5 +1,6 @@
 package com.example.micro_servicio_1_lineales_arboles.controllers;
 
+import com.example.micro_servicio_1_lineales_arboles.models.CsvResponse;
 import com.example.micro_servicio_1_lineales_arboles.services.CsvService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,13 +26,13 @@ public class upLoadCsvController {
     }
 
     @PostMapping("/upload-csv")
-    public ResponseEntity<List<String[]>> uploadCsvFile(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<List<CsvResponse>> uploadCsvFile(@RequestParam("file") MultipartFile file) {
         if (file.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
         try {
-            List<String[]> data = csvService.processCsvFile(file);
+            List<CsvResponse> data = csvService.processCsvFile(file);
             return new ResponseEntity<>(data, HttpStatus.OK);
 
         } catch (IOException e) {
