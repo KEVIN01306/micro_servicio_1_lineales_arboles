@@ -5,11 +5,17 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 public class CsvResponse {
     
     private String type;
     private String operacion;
     private String valor;
+    
+    
+    public CsvResponse(String type, String operacion, String valor) {
+        this.type = type;
+        this.operacion = operacion;
+        this.valor = valor;
+    }
+
 }

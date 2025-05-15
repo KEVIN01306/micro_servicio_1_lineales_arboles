@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.micro_servicio_1_lineales_arboles.config.UtilitisConfig;
 import com.example.micro_servicio_1_lineales_arboles.models.CsvResponse;
 
 import java.io.BufferedReader;
@@ -17,27 +18,77 @@ import java.util.List;
 @Service
 public class CsvService {
 
-    private final ProcessDataService processDataService;
-
     @Autowired
-    public CsvService(ProcessDataService processDataService) {
-        this.processDataService = processDataService;
-    }
-    
+    private UtilitisConfig utilitiesConfig;
+
 
     public List<CsvResponse> processCsvFile(MultipartFile file) throws IOException {
+        
+        List<CsvResponse> data = this.modulData(file);
+        
+
+        
+        return new AlgorithmService().filterForType(data,"stack");
+    }
+
+    public List<CsvResponse> modulData(MultipartFile file) throws IOException {
         List<List<String>> data = new ArrayList<>();
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8))) {
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                List<String> fields = Arrays.asList(line.split(",")); 
+                List<String> fields = Arrays.asList(line.split(","));
                 data.add(fields);
             }
         }
 
-        
-        return this.processDataService.cleanData(data);
+        return this.cleanData(data);
     }
 
-    
+    public List<CsvResponse> cleanData(List<List<String>> data) {
+        List<CsvResponse> response = new ArrayList<>();
+
+        for (List<String> registro : data) {
+            if (!validaciones(registro)) {
+                continue;
+            }
+            
+            CsvResponse registroClean = new CsvResponse(this.translate(registro.get(0)), registro.get(1), registro.get(2));
+
+            response.add(registroClean);
+        }
+
+        return response;
+    }
+
+    public boolean validaciones(List<String> crudData) {
+        if (crudData == null || crudData.size() != 3) {
+            return false;
+        }
+
+        if (crudData.get(2).trim().isBlank() && !"eliminar".equals(crudData.get(1))) {
+            return false;
+        }
+
+        if (!utilitiesConfig.ListaTypes().contains(crudData.get(0))) {
+            return false;
+        }
+
+        if (!utilitiesConfig.ListaOperations().contains(crudData.get(1))) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public String translate(String base){
+        if ("pila".equals(base))
+            return "stack";
+        if ("cola".equals(base)){
+            return "queue";
+        }
+
+        return base;
+    }
+
 }

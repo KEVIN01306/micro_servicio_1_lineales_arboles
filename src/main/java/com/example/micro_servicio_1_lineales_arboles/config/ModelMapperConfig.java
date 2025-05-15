@@ -1,7 +1,5 @@
 package com.example.micro_servicio_1_lineales_arboles.config;
 
-import java.util.Arrays;
-import java.util.List;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
