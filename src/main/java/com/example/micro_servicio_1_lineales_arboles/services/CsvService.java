@@ -21,14 +21,16 @@ public class CsvService {
     @Autowired
     private UtilitisConfig utilitiesConfig;
 
+    @Autowired
+    private AlgorithmService algorithmService; 
+
 
     public List<CsvResponse> processCsvFile(MultipartFile file) throws IOException {
         
         List<CsvResponse> data = this.modulData(file);
         
-
         
-        return new AlgorithmService().filterForType(data,"stack");
+        return algorithmService.executeAlgorithm(data);
     }
 
     public List<CsvResponse> modulData(MultipartFile file) throws IOException {
@@ -53,7 +55,7 @@ public class CsvService {
                 continue;
             }
             
-            CsvResponse registroClean = new CsvResponse(this.translate(registro.get(0)), registro.get(1), registro.get(2));
+            CsvResponse registroClean = new CsvResponse(this.utilitiesConfig.translate(registro.get(0)), registro.get(1), registro.get(2));
 
             response.add(registroClean);
         }
@@ -66,7 +68,7 @@ public class CsvService {
             return false;
         }
 
-        if (crudData.get(2).trim().isBlank() && !"eliminar".equals(crudData.get(1))) {
+        if (crudData.get(2).trim().isBlank() && !utilitiesConfig.ListaOperations().get(1).equals(crudData.get(1))) {
             return false;
         }
 
@@ -81,14 +83,5 @@ public class CsvService {
         return true;
     }
 
-    public String translate(String base){
-        if ("pila".equals(base))
-            return "stack";
-        if ("cola".equals(base)){
-            return "queue";
-        }
-
-        return base;
-    }
 
 }

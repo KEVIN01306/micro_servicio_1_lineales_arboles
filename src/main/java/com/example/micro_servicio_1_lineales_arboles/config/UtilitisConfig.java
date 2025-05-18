@@ -17,4 +17,15 @@ public class UtilitisConfig {
     public List<String> ListaOperations() {
         return Arrays.asList("insertar","eliminar");
     }
+    
+    
+    public String translate(String base){
+        if ("pila".equals(base))
+            return "stack";
+        if ("cola".equals(base)){
+            return "queue";
+        }
+
+        return base;
+    }
 }
