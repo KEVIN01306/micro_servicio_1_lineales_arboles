@@ -42,5 +42,16 @@ public class ImagesService {
         return imagenDTO;
     }
 
+    public Images convertToEntity(ImagesDTO imagenDTO){
+        Images imagen = modelMapper.map(imagenDTO, Images.class);
+        return imagen;
+    }
+
+    public ImagesDTO saveImage(ImagesDTO imagesDTO){
+        Images imageToSave = convertToEntity(imagesDTO);
+        Images savedImage = imageRepository.save(imageToSave);
+        return converToDto(savedImage);
+    }
+
 
 }

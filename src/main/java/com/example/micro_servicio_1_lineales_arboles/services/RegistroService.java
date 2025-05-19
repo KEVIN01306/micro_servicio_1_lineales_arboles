@@ -31,7 +31,7 @@ public class RegistroService {
     }
 
     public RegistroDTO getRegistroById(String id){
-        Registros registro = registroRepository.findOneByIdenQuery(id).orElse(null);
+        Registros registro = registroRepository.findById(id).orElse(null);
         return registro != null ? convertToDTO(registro) : null;
     }
 

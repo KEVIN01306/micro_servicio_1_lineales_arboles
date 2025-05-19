@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.micro_servicio_1_lineales_arboles.dto.ImagesDTO;
@@ -34,9 +35,8 @@ public class ImagesController {
         return new ResponseEntity<>(imagenes,HttpStatus.OK);
     }
 
-    @PostMapping("obtenerTodasLasImagenesRegistro")
-    public ResponseEntity<List<ImagesDTO>> obtenerTodasLasImagenesRegistro(@RequestBody Map<String, String> requestBody){
-        String id = requestBody.get("registro_Id");
+    @GetMapping("/obtenerTodasLasImagenesRegistro")
+    public ResponseEntity<List<ImagesDTO>> obtenerTodasLasImagenesRegistro(@RequestParam("registro_Id") String id){
         List<ImagesDTO> imagenes = imagesService.getAllImagesRegistro(id);
         if (imagenes != null) {
             return new ResponseEntity<>(imagenes, HttpStatus.OK);

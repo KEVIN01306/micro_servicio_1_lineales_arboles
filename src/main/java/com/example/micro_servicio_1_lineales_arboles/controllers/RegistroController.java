@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.micro_servicio_1_lineales_arboles.dto.RegistroDTO;
@@ -34,9 +35,8 @@ public class RegistroController {
         return new ResponseEntity<>(registros, HttpStatus.OK);
     }
 
-    @PostMapping("/buscarPorId")
-    public ResponseEntity<RegistroDTO> obtenerRegistroPorIdFromBody(@RequestBody Map<String, String> requestBody) {
-        String id = requestBody.get("iden");
+    @GetMapping("/buscarPorId")
+    public ResponseEntity<RegistroDTO> obtenerRegistroPorIdFromParam(@RequestParam("id") String id) {
         RegistroDTO registro = registroService.getRegistroById(id);
         if (registro != null) {
             return new ResponseEntity<>(registro, HttpStatus.OK);
@@ -45,9 +45,8 @@ public class RegistroController {
         }
     }
     
-    @PostMapping("/buscarPorTipo")
-    public ResponseEntity<List<RegistroDTO>> obtenerRegistroPortype(@RequestBody Map<String,String> requesBody){
-        String type = requesBody.get("type");
+    @GetMapping("/buscarPorTipo")
+    public ResponseEntity<List<RegistroDTO>> obtenerRegistroPortype(@RequestParam("type") String type){
         List<RegistroDTO> registro = registroService.getRegistroByType(type);
         if (registro != null) {
             return new ResponseEntity<>(registro, HttpStatus.OK);

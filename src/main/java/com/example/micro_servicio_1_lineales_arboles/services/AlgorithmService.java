@@ -1,6 +1,8 @@
 package com.example.micro_servicio_1_lineales_arboles.services;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +12,7 @@ import com.example.micro_servicio_1_lineales_arboles.config.UtilitisConfig;
 import com.example.micro_servicio_1_lineales_arboles.dto.ImagesDTO;
 import com.example.micro_servicio_1_lineales_arboles.dto.RegistroDTO;
 import com.example.micro_servicio_1_lineales_arboles.models.CsvResponse;
-import com.example.micro_servicio_1_lineales_arboles.models.Inserts;
+import com.example.micro_servicio_1_lineales_arboles.models.Images;
 
 @Service
 public class AlgorithmService {
@@ -18,24 +20,26 @@ public class AlgorithmService {
     @Autowired
     private UtilitisConfig utilitiesConfig;
 
-        @Autowired
+    @Autowired
     private CreateImageService createImageService;
 
+    @Autowired
+    private RegistroService registroService;
+    
+    @Autowired
+    private ImagesService imagesService;
 
     public List<CsvResponse>  executeAlgorithm(List<CsvResponse> data){
         List<CsvResponse> response = new ArrayList<>();
         for ( String type: utilitiesConfig.ListaTypes()){
             response = filterForType(data,utilitiesConfig.translate(type));
 
-            if (!response.isEmpty()){
+            if (response.isEmpty()){
                 continue;
             }
 
-
-
-
+            this.executeAlgorithmForType(response,type);
         }
-
         return response;
     }
 
@@ -53,20 +57,43 @@ public class AlgorithmService {
 
     public void executeAlgorithmForType(List<CsvResponse> data, String type){
 
-        Inserts insert;
-        List<String> changes = new ArrayList<>();
+        List<String> changesList = new ArrayList<>();
+        Integer changes = 0;
+        List<ImagesDTO> imagesList = new ArrayList<ImagesDTO>();
 
-        if (!data.isEmpty()){
+        if (data.isEmpty()){
             return;
         }
         for (CsvResponse lineData: data){
             if (utilitiesConfig.translate(type).equals(utilitiesConfig.ListaTypes().get(0))){
-                changes = algorithmStack(changes, lineData);
+                changesList = algorithmStack(changesList, lineData);
             }else if(utilitiesConfig.translate(type).equals(utilitiesConfig.ListaTypes().get(1))){
-                changes = algorithmQueue(changes, lineData);
+                changesList = algorithmQueue(changesList, lineData);
             }
 
+            ImagesDTO imageDto = new ImagesDTO();
+            imageDto.setRegistro_Id("0");
+            try {
+                imageDto.setImagen(createImageService.generateListImageBase64(changesList));
+                imagesList.add(imageDto);
+            } catch (IOException e) {
+                System.err.println("Error al generar la imagen Base64 para la lista " + changes + ": " + e.getMessage());
+            }
+            changes ++;
         }
+
+        RegistroDTO registroDto = new RegistroDTO();
+        registroDto.setDate(java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.ISO_DATE));
+        registroDto.setChanges(String.valueOf(changes));
+        registroDto.setType(utilitiesConfig.translate(type));
+
+        RegistroDTO registroGuardadoDto = this.registroService.guardarRegistro(registroDto);
+
+        for (ImagesDTO imagen: imagesList){
+            imagen.setRegistro_Id(registroGuardadoDto.getId());
+            this.imagesService.saveImage(imagen);
+        }
+
     }
     
     public List<String> algorithmStack(List<String> changes,CsvResponse line){
