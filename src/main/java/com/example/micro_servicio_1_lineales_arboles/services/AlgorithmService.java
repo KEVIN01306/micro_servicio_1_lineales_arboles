@@ -65,14 +65,19 @@ public class AlgorithmService {
             return;
         }
         for (CsvResponse lineData: data){
-            if (utilitiesConfig.translate(type).equals(utilitiesConfig.ListaTypes().get(0))){
-                changesList = algorithmStack(changesList, lineData);
-            }else if(utilitiesConfig.translate(type).equals(utilitiesConfig.ListaTypes().get(1))){
+            if (utilitiesConfig.translate(type).equals(utilitiesConfig.translate(utilitiesConfig.ListaTypes().get(0)))){
+                changesList = algorithmStack(changesList,lineData);
+            }else if(utilitiesConfig.translate(type).equals(utilitiesConfig.translate(utilitiesConfig.ListaTypes().get(1)))){
                 changesList = algorithmQueue(changesList, lineData);
             }
 
+            System.out.println("Operacion recibida: " + lineData.getType());
+            System.out.println("Operacion esperada: " + utilitiesConfig.ListaTypes().get(0));
+            System.out.println("Lista completa de operaciones: " + utilitiesConfig.ListaOperations());
+
             ImagesDTO imageDto = new ImagesDTO();
             imageDto.setRegistro_Id("0");
+            System.out.println(changesList);
             try {
                 imageDto.setImagen(createImageService.generateListImageBase64(changesList));
                 imagesList.add(imageDto);
@@ -93,17 +98,15 @@ public class AlgorithmService {
             imagen.setRegistro_Id(registroGuardadoDto.getId());
             this.imagesService.saveImage(imagen);
         }
-
     }
     
     public List<String> algorithmStack(List<String> changes,CsvResponse line){
         List<String> newChanges = changes;
         if (line.getOperacion().equals(utilitiesConfig.ListaOperations().get(0))){
             newChanges.add(line.getValor());
-        } else if (line.getOperacion().equals(utilitiesConfig.ListaOperations().get(1))){
+        } else if (line.getOperacion().equals(utilitiesConfig.ListaOperations().get(1)) && !newChanges.isEmpty()){
             newChanges.remove(newChanges.size() -1);
         }
-
         return newChanges;
     }
 
@@ -111,10 +114,9 @@ public class AlgorithmService {
         List<String> newChanges = changes;
         if (line.getOperacion().equals(utilitiesConfig.ListaOperations().get(0))){
             newChanges.add(line.getValor());
-        } else if (line.getOperacion().equals(utilitiesConfig.ListaOperations().get(1))){
+        } else if (line.getOperacion().equals(utilitiesConfig.ListaOperations().get(1)) && !newChanges.isEmpty()){
             newChanges.remove(0);
         }
-        
         return newChanges;
     }
 
