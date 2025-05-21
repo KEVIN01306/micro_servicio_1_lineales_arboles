@@ -13,7 +13,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
-
 @RestController
 @RequestMapping("/api")
 @CrossOrigin(origins = "*")
@@ -26,18 +25,21 @@ public class upLoadCsvController {
     }
 
     @PostMapping("/upload-csv")
-    public ResponseEntity<List<CsvResponse>> uploadCsvFile(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<String> uploadCsvFile(@RequestParam("file") MultipartFile file) {
         if (file.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("El archivo está vacío.", HttpStatus.BAD_REQUEST);
         }
 
         try {
             List<CsvResponse> data = csvService.processCsvFile(file);
-            return new ResponseEntity<>(data, HttpStatus.OK);
+            if (data.isEmpty())
+                return new ResponseEntity<>("Error de tipos o comandos",HttpStatus.BAD_REQUEST);
+                
+            return new ResponseEntity<>("Data insertabda correctamente", HttpStatus.OK);
 
         } catch (IOException e) {
             e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Error al procesar el archivo CSV.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

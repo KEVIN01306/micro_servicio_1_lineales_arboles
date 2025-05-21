@@ -40,7 +40,7 @@ public class AlgorithmService {
 
             this.executeAlgorithmForType(response,type);
         }
-        return response;
+        return data;
     }
 
     public List<CsvResponse> filterForType(List<CsvResponse> listaData, String filter) {
@@ -69,6 +69,8 @@ public class AlgorithmService {
                 changesList = algorithmStack(changesList,lineData);
             }else if(utilitiesConfig.translate(type).equals(utilitiesConfig.translate(utilitiesConfig.ListaTypes().get(1)))){
                 changesList = algorithmQueue(changesList, lineData);
+            }else if(utilitiesConfig.translate(type).equals(utilitiesConfig.translate(utilitiesConfig.ListaTypes().get(2)))){
+                changesList = alorithmsArray(changesList, lineData);
             }
 
             System.out.println("Operacion recibida: " + lineData.getType());
@@ -98,6 +100,16 @@ public class AlgorithmService {
             imagen.setRegistro_Id(registroGuardadoDto.getId());
             this.imagesService.saveImage(imagen);
         }
+    }
+
+    public List<String> alorithmsArray(List<String> changes,CsvResponse line){
+        List<String> newChanges = changes;
+        if (line.getOperacion().equals(utilitiesConfig.ListaOperations().get(0))){
+            newChanges.add(line.getValor());
+        } else if (line.getOperacion().equals(utilitiesConfig.ListaOperations().get(1)) && !newChanges.isEmpty()){
+            newChanges.remove(newChanges.size() - 1);
+        }
+        return newChanges;
     }
     
     public List<String> algorithmStack(List<String> changes,CsvResponse line){

@@ -10,7 +10,7 @@ public class UtilitisConfig {
     
     @Bean
     public List<String> ListaTypes() {
-        return Arrays.asList("pila","cola");
+        return Arrays.asList("pila","cola","arreglo");
     }
 
     @Bean
@@ -20,10 +20,14 @@ public class UtilitisConfig {
     
     
     public String translate(String base){
-        if ("pila".equals(base))
+        if ("pila".equals(base)){
             return "stack";
+        }
         if ("cola".equals(base)){
             return "queue";
+        }
+        if ("arreglo".equals(base)){
+            return "array";
         }
 
         return base;
