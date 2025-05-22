@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 @RestController
 @RequestMapping("/api")
 @CrossOrigin(origins = "*")
@@ -25,21 +27,34 @@ public class upLoadCsvController {
     }
 
     @PostMapping("/upload-csv")
-    public ResponseEntity<String> uploadCsvFile(@RequestParam("file") MultipartFile file) {
-        if (file.isEmpty()) {
-            return new ResponseEntity<>("El archivo está vacío.", HttpStatus.BAD_REQUEST);
+    public ResponseEntity<Map<String, String>> uploadCsvFile(@RequestParam("file") MultipartFile file) {
+        Map<String, String> response = new HashMap<>();
+
+        if (!file.getOriginalFilename().toLowerCase().endsWith(".csv")) {
+            response.put("message", "El archivo debe tener extensión .csv");
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
+
+        if (file.isEmpty()) {
+            response.put("message", "El archivo está vacío.");
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+
 
         try {
             List<CsvResponse> data = csvService.processCsvFile(file);
-            if (data.isEmpty())
-                return new ResponseEntity<>("Error de tipos o comandos",HttpStatus.BAD_REQUEST);
-                
-            return new ResponseEntity<>("Data insertabda correctamente", HttpStatus.OK);
+            if (data.isEmpty()) {
+                response.put("message", "Error de tipos o comandos");
+                return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+            }
+
+            response.put("message", "Data insertada correctamente");
+            return new ResponseEntity<>(response, HttpStatus.OK);
 
         } catch (IOException e) {
             e.printStackTrace();
-            return new ResponseEntity<>("Error al procesar el archivo CSV.", HttpStatus.INTERNAL_SERVER_ERROR);
+            response.put("message", "Error al procesar el archivo CSV.");
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
